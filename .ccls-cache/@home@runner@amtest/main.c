@@ -29,6 +29,37 @@ void write_values_hex(const char *filename, uint16_t *values, int num_values) {
 }
 
 void read_values_hex(const char *filename) {
+  FILE *file = fopen(filename, "r");
+  if (file==NULL){
+    perror("Error opening for reading\n");
+    exit(EXIT_FAILURE);
+  }
+
+  //Read the size of values
+  int numberofVal;
+  if(fscanf(file, "%X", &numberofVal)!=1){
+    fprintf(stderr, "Error reading the sz of values from file\n");
+    fclose(file);
+    exit(EXIT_FAILURE);
+  }
+
+  printf("Read values from %s:\n", filename);
+
+  int val;
+  if(fscanf(file, "%X", &val)!=1){
+    fclose(file);
+    exit(EXIT_FAILURE);
+  }
+
+  for(int i=1; i<numberofVal;i++){ //skip printing the first value
+    if(fscanf(file, "%X", &val)!=1){
+      fclose(file);
+      exit(EXIT_FAILURE);
+    }
+    printf("%d ", ntohs(val));
+  }
+  printf("\n");
+  fclose(file);
 }
 
 int main(int argc, char *argv[]) {
